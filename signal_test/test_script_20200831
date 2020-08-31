@@ -1,0 +1,15 @@
+#!/bin/bash
+
+idx=0
+
+cmd="./a.out"
+for(( idx=0; idx<10; idx++ ))do
+
+echo "$cmd"
+$cmd &
+
+sleep 3
+
+done
+
+echo "finished"

@@ -16,20 +16,23 @@ int main() {
         pid = fork();
     }
      // 2^n process created
-    if(pid > 0) {  // 부모 코드
+    if(pid > 0) {  // parent
         x = 1;
         key = 1;
         printf("parent PID : %ld,  x : %d , pid : %d\n",(long)getpid(), x, pid);
     }
-    else if(pid == 0){  // 자식 코드
+    else if(pid == 0){  // child
         x = 2;
         key = 1;
         printf("child PID : %ld,  x : %d, p_int : %d \n",(long)getpid(), x, *p_int);
     }
-    else {  // fork 실패
+    else {  // fork failure
         printf("fork Fail! \n");
         return -1;
     }
+    
+    //2^n printed
+    printf("test pid : %ld \n", (long)getpid());
      
     return 0;
  

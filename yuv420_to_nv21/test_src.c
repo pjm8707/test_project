@@ -48,11 +48,9 @@ int main(int argc, char **argv)
     assert(fp_read != NULL);
     assert(fp_write != NULL);
         
-    for (idx = 0; conv_info.output_num; idx++)
+    for (idx = 0; idx < conv_info.output_num; idx++)
     {
         f_read_size = fread(work_buf, 1, luma_size, fp_read);
-        printf("read size : %d \n", f_read_size);
-        printf("luma size : %d \n", luma_size);
         assert(f_read_size == luma_size);
         fwrite(work_buf, 1, luma_size, fp_write);
 
@@ -148,10 +146,12 @@ void swap_nv(void* buf, int cb_size, int bpp)
     assert(buf != NULL);
 
     temp_buf = (char*)malloc(cb_size * 2);
+    pos = temp_buf;
+    pos_two = (short*)temp_buf;
 
     if (bpp == 1) 
     {
-        for (idx = 0 ; idx < cb_size; idx++) 
+        for (idx = 0; idx < cb_size; idx++) 
         {
             *pos++=*cb_st++;
             *pos++=*cr_st++;
@@ -159,7 +159,7 @@ void swap_nv(void* buf, int cb_size, int bpp)
     } 
     else if (bpp == 2) 
     {
-        for (idx = 0 ; idx < cb_size; idx++) 
+        for (idx = 0; idx < cb_size; idx++) 
         {
             *pos_two++=*cb_st_two++;
             *pos_two++=*cr_st_two++;

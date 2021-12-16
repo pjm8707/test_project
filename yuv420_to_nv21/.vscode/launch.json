@@ -5,20 +5,24 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) 시작",
+            "name": "debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "프로그램 이름 입력(예: ${workspaceFolder}/a.exe)",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${fileDirname}",
-            "environment": [],
-            "externalConsole": false,
+            "program": "${workspaceRoot}/yuv420_to_nv12",
+            "args": [
+                "-i BasketballPass_360x208_10b_90f.yuv",
+                "-o basketball_pass_360x208_10b_nv12.yuv",
+                "-w 360",
+                "-h 208",                                                                          
+                "-n 3",
+                "-b 1"
+            ],
+            "cwd": "${workspaceRoot}",      
             "MIMode": "gdb",
-            "miDebuggerPath": "/path/to/gdb",
+            "miDebuggerPath": "C:/Users/ian/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/usr/bin/gdb",
             "setupCommands": [
                 {
-                    "description": "gdb에 자동 서식 지정 사용",
+                    "description": "Enable pretty-printing for gdb",
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
                 }

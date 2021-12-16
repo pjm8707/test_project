@@ -9,6 +9,16 @@ typedef int BOOL;
 #define TRUE 1
 #define FALSE 0
 
+typedef struct
+{
+    const char *name;
+    int has_arg;
+    int *flag;
+    int val;
+    const char *help;
+} optionExt;
+
+void Help(optionExt *opt, const char *prog_name);
 int parseArg (int argc, char **argv, convInfo *pArg);
 void swap_nv(void* data, int y_size, int nv21);
 
@@ -25,6 +35,8 @@ int main(int argc, char **argv)
 
     ret = parseArg(argc, argv, &conv_info);
 
+    assert(ret == 0);
+
     if ( conv_info.is_10b == 1 ) 
     {
         bpp = 2;
@@ -40,7 +52,9 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    work_buf = (char*)malloc(luma_size);
+    printf("luma size : %d cb_size : %d chroma_size : %d \n", luma_size, cb_size, chroma_size);
+
+    work_buf = (char*)malloc(luma_size+1);
 
     fp_read = fopen(conv_info.input_file, "rb");
     fp_write = fopen(conv_info.output_file, "wb");
@@ -64,16 +78,43 @@ int main(int argc, char **argv)
     fclose(fp_read);
     fclose(fp_write);
 
+    printf("finished \n");
+
     return ret;
+}
+
+void Help(optionExt *opt, const char *prog_name)
+{
+    //int i;
+
+    printf("------------------------------------------------------------------------------\n");
+    printf("%s \n", prog_name);
+    printf("\tAll rights reserved by Chips&Media(C)\n");
+    printf("------------------------------------------------------------------------------\n");
+    printf("-i                          input file path\n");
+    printf("-o                          output file path\n");
+    printf("-n                          number of output \n");
+    printf("-w                          source width \n");
+    printf("-h                          source height \n");
+    printf("-b                          bitdepth, 0 : 8b , 1 : 10b \n");
+    /* 
+    for (i = 0;i < MAX_GETOPT_OPTIONS;i++) {
+        if (opt[i].name == NULL)
+            break;
+        VLOG(INFO, "%s", opt[i].help);
+    }
+    */
 }
 
 int parseArg(int argc, char **argv, convInfo *pArg)
 {
     int     i;
     char    *s;
+
     for (i=1; i<argc; i++) {
         s = argv[i];
-        if (s[0] == '-') {
+        if (s[0] == '-') 
+        {
             switch (s[1]) {
             case 'i':
                 if (s[2] != 0)
@@ -126,8 +167,15 @@ int parseArg(int argc, char **argv, convInfo *pArg)
             default:
                 return -1;
             }
-        } else
+        } 
+        else 
+        {
             return -1;
+        }
+    }
+    if (argc == 1 ) 
+    {
+        Help(NULL, argv[0]);
     }
     return 0;
 }
@@ -146,6 +194,9 @@ void swap_nv(void* buf, int cb_size, int bpp)
     assert(buf != NULL);
 
     temp_buf = (char*)malloc(cb_size * 2);
+
+    assert(temp_buf != NULL);
+    
     pos = temp_buf;
     pos_two = (short*)temp_buf;
 
@@ -159,7 +210,7 @@ void swap_nv(void* buf, int cb_size, int bpp)
     } 
     else if (bpp == 2) 
     {
-        for (idx = 0; idx < cb_size; idx++) 
+        for (idx = 0; idx < (cb_size / bpp); idx++) 
         {
             *pos_two++=*cb_st_two++;
             *pos_two++=*cr_st_two++;
@@ -169,8 +220,7 @@ void swap_nv(void* buf, int cb_size, int bpp)
     {
         assert(1 == 0);
     }
-    assert(temp_buf != NULL);
-
+    
     memcpy(buf, temp_buf, cb_size * 2);
     free(temp_buf);
 }
